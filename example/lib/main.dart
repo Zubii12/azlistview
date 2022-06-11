@@ -8,8 +8,7 @@ import 'ui/index.dart';
 void main() {
   runApp(MyApp());
   if (Platform.isAndroid) {
-    SystemChrome.setSystemUIOverlayStyle(
-        SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.transparent));
   }
 }
 
@@ -19,8 +18,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'AzListView Demo',
       theme: ThemeData(
-        primaryColor: Colors.white,
-        accentColor: Colors.grey,
+        colorScheme: ColorScheme.light(primary: Colors.white, secondary: Colors.grey),
         //primarySwatch: Colors.white,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
@@ -35,8 +33,7 @@ class MyApp extends StatelessWidget {
           PageInfo("Contacts", (ctx) => ContactsPage(), false),
           PageInfo("Contacts List", (ctx) => ContactListPage()),
           PageInfo("City List", (ctx) => CityListPage(), false),
-          PageInfo(
-              "City List(Custom header)", (ctx) => CityListCustomHeaderPage()),
+          PageInfo("City List(Custom header)", (ctx) => CityListCustomHeaderPage()),
           PageInfo("Car models", (ctx) => CarModelsPage(), false),
           PageInfo("10000 data", (ctx) => LargeDataPage(), false),
         ]),
