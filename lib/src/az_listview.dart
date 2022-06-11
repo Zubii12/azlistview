@@ -14,6 +14,7 @@ class AzListView extends StatefulWidget {
     required this.itemBuilder,
     this.itemScrollController,
     this.itemPositionsListener,
+    this.indexBarDragListener,
     this.physics,
     this.padding,
     this.susItemBuilder,
@@ -45,6 +46,8 @@ class AzListView extends StatefulWidget {
 
   /// Notifier that reports the items laid out in the list after each frame.
   final ItemPositionsListener? itemPositionsListener;
+
+  final IndexBarDragListener? indexBarDragListener;
 
   /// How the scroll view should respond to user input.
   ///
@@ -104,7 +107,7 @@ class _AzListViewState extends State<AzListView> {
   /// Listener that reports the position of items when the list is scrolled.
   late ItemPositionsListener itemPositionsListener;
 
-  IndexBarDragListener dragListener = IndexBarDragListener.create();
+  IndexBarDragListener get dragListener => widget.indexBarDragListener ?? IndexBarDragListener.create();
 
   final IndexBarController indexBarController = IndexBarController();
 
@@ -113,10 +116,8 @@ class _AzListViewState extends State<AzListView> {
   @override
   void initState() {
     super.initState();
-    itemScrollController =
-        widget.itemScrollController ?? ItemScrollController();
-    itemPositionsListener =
-        widget.itemPositionsListener ?? ItemPositionsListener.create();
+    itemScrollController = widget.itemScrollController ?? ItemScrollController();
+    itemPositionsListener = widget.itemPositionsListener ?? ItemPositionsListener.create();
     dragListener.dragDetails.addListener(_valueChanged);
     if (widget.indexBarOptions.selectItemDecoration != null) {
       itemPositionsListener.itemPositions.addListener(_positionsChanged);
@@ -152,23 +153,18 @@ class _AzListViewState extends State<AzListView> {
   void _valueChanged() {
     IndexBarDragDetails details = dragListener.dragDetails.value;
     String tag = details.tag!;
-    if (details.action == IndexBarDragDetails.actionDown ||
-        details.action == IndexBarDragDetails.actionUpdate) {
+    if (details.action == IndexBarDragDetails.actionDown || details.action == IndexBarDragDetails.actionUpdate) {
       selectTag = tag;
       _scrollTopIndex(tag);
     }
   }
 
   void _positionsChanged() {
-    Iterable<ItemPosition> positions =
-        itemPositionsListener.itemPositions.value;
+    Iterable<ItemPosition> positions = itemPositionsListener.itemPositions.value;
     if (positions.isNotEmpty) {
-      ItemPosition itemPosition = positions
-          .where((ItemPosition position) => position.itemTrailingEdge > 0)
-          .reduce((ItemPosition min, ItemPosition position) =>
-              position.itemTrailingEdge < min.itemTrailingEdge
-                  ? position
-                  : min);
+      ItemPosition itemPosition = positions.where((ItemPosition position) => position.itemTrailingEdge > 0).reduce(
+          (ItemPosition min, ItemPosition position) =>
+              position.itemTrailingEdge < min.itemTrailingEdge ? position : min);
       int index = itemPosition.index;
       String tag = widget.data[index].getSuspensionTag();
       if (selectTag != tag) {
